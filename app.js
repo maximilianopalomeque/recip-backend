@@ -1,4 +1,4 @@
-const { db_url, port } = require(".config");
+const { db_url, port } = require("./config");
 
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -12,6 +12,7 @@ const categoriesRoutes = require("./routes/categories-routes");
 
 app.use(express.json());
 
+// manage cors before upload
 app.use(
   cors({
     allowedHeaders: ["Content-Type"],
@@ -20,17 +21,16 @@ app.use(
   })
 );
 
-app.use("/recipes", recipesRoutes);
 app.use("/categories", categoriesRoutes);
+app.use("/recipes", recipesRoutes);
 
 app.use((req, res, next) => {
-  const error = new CustomError("could not find the route", 404);
-  throw error;
+  throw new CustomError("could not find the route", 404);
 });
 
 app.use((error, req, res, next) => {
   res.status(error.code || 500);
-  res.json({ message: error.message || "an unknown error ocurred" });
+  res.json({ error: error.message || "an unknown error ocurred" });
 });
 
 mongoose
@@ -42,4 +42,4 @@ mongoose
     console.log("could not connect to db");
   });
 
-app.listen(port);
+app.listen(port, () => console.log("listening on asigned port"));
