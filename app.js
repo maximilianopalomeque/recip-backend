@@ -12,7 +12,7 @@ const categoriesRoutes = require("./routes/categories-routes");
 
 app.use(express.json());
 
-// manage cors before upload
+// manage cors before deploy
 app.use(
   cors({
     allowedHeaders: ["Content-Type"],
@@ -20,6 +20,11 @@ app.use(
     preflightContinue: true,
   })
 );
+
+// manage authentication
+// manage post recipe
+// create user
+// login
 
 app.use("/categories", categoriesRoutes);
 app.use("/recipes", recipesRoutes);

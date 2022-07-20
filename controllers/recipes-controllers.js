@@ -11,18 +11,16 @@ const getAllRecipes = async (req, res, next) => {
   }
 };
 
-const getRecipesByCategory = async (req, res, next) => {
-  const categoryName = req.params.category;
+const getRecipe = async (req, res, next) => {
+  const recipeName = req.params.recipeName;
 
   try {
-    const category = await Category.findOne({ name: categoryName })
-      .populate("recipes")
-      .orFail();
-    res.json({ recipes: category.recipes });
+    const recipe = await Recipe.findOne({ name: recipeName }).orFail();
+    res.json({ recipe: recipe });
   } catch (error) {
-    return next(new CustomError("could not get recipes by category", 404));
+    return next(new CustomError("could not get recipe from db", 404));
   }
 };
 
 exports.getAllRecipes = getAllRecipes;
-exports.getRecipesByCategory = getRecipesByCategory;
+exports.getRecipe = getRecipe;
