@@ -9,6 +9,7 @@ const CustomError = require("./models/CustomError");
 
 const recipesRoutes = require("./routes/recipes-routes");
 const categoriesRoutes = require("./routes/categories-routes");
+const userRoutes = require("./routes/user-routes");
 
 app.use(express.json());
 
@@ -28,6 +29,8 @@ app.use(
 
 app.use("/categories", categoriesRoutes);
 app.use("/recipes", recipesRoutes);
+
+app.use("/users", userRoutes);
 
 app.use((req, res, next) => {
   throw new CustomError("could not find the route", 404);
