@@ -12,9 +12,12 @@ const signup = async (req, res, next) => {
   const { username, email, password } = req.body;
 
   try {
-    const existingUser = await User.findOne({ email: email }).orFail();
+    const existingUser = await User.findOne({ email: email });
+    if (existingUser) {
+      return next(new CustomError("user already exists", 500));
+    }
   } catch (error) {
-    return next(new CustomError("user already exists", 500));
+    return next(new CustomError("something went wrong, can't sign up", 500));
   }
 
   let hashedPassword;
@@ -61,7 +64,7 @@ const login = async (req, res, next) => {
   try {
     const validPassword = await bcrypt.compare(password, existingUser.password);
     if (!validPassword) {
-      return next(new CustomError("password does not match", 500));
+      return next(new CustomError("incorrect password", 500));
     }
   } catch (error) {
     return next(new CustomError("failed to compare passwords", 500));
