@@ -2,6 +2,8 @@ const CustomError = require("../models/CustomError");
 const User = require("../models/userSchema");
 const { validationResult } = require("express-validator");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const { token_secret } = require("../config");
 
 const signup = async (req, res, next) => {
   const errors = validationResult(req);
@@ -33,6 +35,7 @@ const signup = async (req, res, next) => {
     username,
     email,
     password: hashedPassword,
+    userRecipes: [],
   });
 
   try {
@@ -41,8 +44,30 @@ const signup = async (req, res, next) => {
     return next(new CustomError("could not save user to db", 500));
   }
 
-  res.json({ message: "user created", username: username, email: email });
+  let token;
+  try {
+    token = jwt.sign(
+      { username: newUser.username, email: newUser.email },
+      token_secret,
+      {
+        expiresIn: "1h",
+      }
+    );
+  } catch (error) {
+    return next(
+      new CustomError("Signing up failed, please try again later.", 500)
+    );
+  }
+
+  res.status(201).json({
+    message: "user created",
+    username: newUser.username,
+    email: newUser.email,
+    token: token,
+  });
 };
+
+// -------
 
 const login = async (req, res, next) => {
   const errors = validationResult(req);
@@ -70,7 +95,27 @@ const login = async (req, res, next) => {
     return next(new CustomError("failed to compare passwords", 500));
   }
 
-  res.json({ message: "logged in", email: email });
+  let token;
+  try {
+    token = jwt.sign(
+      { username: existingUser.username, email: existingUser.email },
+      token_secret,
+      {
+        expiresIn: "1h",
+      }
+    );
+  } catch (error) {
+    return next(
+      new CustomError("Invalid credentials, could not log you in.", 401)
+    );
+  }
+
+  res.json({
+    message: "logged in",
+    username: existingUser.username,
+    email: existingUser.email,
+    token: token,
+  });
 };
 
 exports.signup = signup;

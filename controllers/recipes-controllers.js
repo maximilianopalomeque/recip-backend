@@ -22,5 +22,15 @@ const getRecipe = async (req, res, next) => {
   }
 };
 
+const saveRecipe = (req, res, next) => {
+  res.send("authenticated");
+};
+
+const deleteRecipe = (req, res, next) => {
+  res.send("authenticated");
+};
+
 exports.getAllRecipes = getAllRecipes;
 exports.getRecipe = getRecipe;
+exports.saveRecipe = saveRecipe;
+exports.deleteRecipe = deleteRecipe;

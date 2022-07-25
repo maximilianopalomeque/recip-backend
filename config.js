@@ -7,4 +7,5 @@ module.exports = {
   meal_id_url: process.env.MEAL_ID_URL,
   db_url: process.env.DB_URL,
   port: process.env.PORT,
+  token_secret: process.env.TOKEN_SECRET,
 };
