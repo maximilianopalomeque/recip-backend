@@ -6,15 +6,20 @@ const {
   getRecipe,
   saveRecipe,
   deleteRecipe,
+  getUserRecipes,
 } = require("../controllers/recipes-controllers");
 const { checkAuth } = require("../middlewares/check-auth");
 
 router.get("/", getAllRecipes);
+
 router.get("/:recipeName", getRecipe);
 
 router.use(checkAuth);
 
+router.get("/user/:username/", getUserRecipes);
+
 router.post("/recipe/save", check("username").not().isEmpty(), saveRecipe);
+
 router.delete(
   "/recipe/delete",
   check("username").not().isEmpty(),

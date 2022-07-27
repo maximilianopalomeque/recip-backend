@@ -16,13 +16,13 @@ app.use(express.json());
 // manage cors before deploy
 app.use(
   cors({
-    allowedHeaders: ["Content-Type"],
+    allowedHeaders: ["Content-Type", "Authorization"],
     origin: "*",
     preflightContinue: true,
   })
 );
 
-// manage post recipe
+app.options("*", cors());
 
 app.use("/categories", categoriesRoutes);
 app.use("/recipes", recipesRoutes);

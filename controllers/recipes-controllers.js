@@ -1,7 +1,6 @@
 const Recipe = require("../models/recipeSchema");
 const User = require("../models/userSchema");
 const CustomError = require("../models/CustomError");
-const Category = require("../models/categorySchema");
 const { validationResult } = require("express-validator");
 
 const getAllRecipes = async (req, res, next) => {
@@ -21,6 +20,19 @@ const getRecipe = async (req, res, next) => {
     res.json({ recipe: recipe });
   } catch (error) {
     return next(new CustomError("could not get recipe from db", 404));
+  }
+};
+
+const getUserRecipes = async (req, res, next) => {
+  const { username } = req.params;
+
+  try {
+    const recipes = await User.findOne({ username: username })
+      .populate("userRecipes")
+      .orFail();
+    res.json({ recipes: recipes.userRecipes });
+  } catch (error) {
+    return next(new CustomError("could not get user recipes from db", 404));
   }
 };
 
@@ -80,5 +92,6 @@ const deleteRecipe = async (req, res, next) => {
 
 exports.getAllRecipes = getAllRecipes;
 exports.getRecipe = getRecipe;
+exports.getUserRecipes = getUserRecipes;
 exports.saveRecipe = saveRecipe;
 exports.deleteRecipe = deleteRecipe;
