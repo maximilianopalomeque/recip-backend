@@ -14,9 +14,14 @@ const signup = async (req, res, next) => {
   const { username, email, password } = req.body;
 
   try {
-    const existingUser = await User.findOne({ email: email });
-    if (existingUser) {
-      return next(new CustomError("user already exists", 500));
+    const existingEmail = await User.findOne({ email: email });
+    if (existingEmail) {
+      return next(new CustomError("email already used", 500));
+    }
+
+    const existingUsername = await User.findOne({ username: username });
+    if (existingUsername) {
+      return next(new CustomError("username already used", 500));
     }
   } catch (error) {
     return next(new CustomError("something went wrong, can't sign up", 500));

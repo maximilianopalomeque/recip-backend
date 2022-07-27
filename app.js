@@ -22,10 +22,7 @@ app.use(
   })
 );
 
-// manage authentication
 // manage post recipe
-// create user
-// login
 
 app.use("/categories", categoriesRoutes);
 app.use("/recipes", recipesRoutes);

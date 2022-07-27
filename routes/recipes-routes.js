@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const { check } = require("express-validator");
 const {
   getAllRecipes,
   getRecipe,
@@ -13,7 +14,11 @@ router.get("/:recipeName", getRecipe);
 
 router.use(checkAuth);
 
-router.post("/recipe/save", saveRecipe);
-router.delete("/recipe/delete", deleteRecipe);
+router.post("/recipe/save", check("username").not().isEmpty(), saveRecipe);
+router.delete(
+  "/recipe/delete",
+  check("username").not().isEmpty(),
+  deleteRecipe
+);
 
 module.exports = router;

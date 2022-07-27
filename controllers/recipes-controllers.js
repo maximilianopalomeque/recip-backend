@@ -1,6 +1,8 @@
 const Recipe = require("../models/recipeSchema");
+const User = require("../models/userSchema");
 const CustomError = require("../models/CustomError");
 const Category = require("../models/categorySchema");
+const { validationResult } = require("express-validator");
 
 const getAllRecipes = async (req, res, next) => {
   try {
@@ -22,12 +24,58 @@ const getRecipe = async (req, res, next) => {
   }
 };
 
-const saveRecipe = (req, res, next) => {
-  res.send("authenticated");
+const saveRecipe = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(new CustomError("invalid credentials, can't save recipe", 401));
+  }
+
+  const { username, recipeId } = req.body;
+
+  let user;
+  try {
+    user = await User.findOne({ username: username }).orFail();
+  } catch (error) {
+    return next(new CustomError("user does not exists", 401));
+  }
+
+  user.userRecipes = [...user.userRecipes, recipeId];
+
+  try {
+    user.save();
+  } catch (error) {
+    return next(new CustomError("failed to save user", 404));
+  }
+
+  res.json({ message: "recipe saved", username: user.username });
 };
 
-const deleteRecipe = (req, res, next) => {
-  res.send("authenticated");
+const deleteRecipe = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(
+      new CustomError("invalid credentials, can't delete recipe", 401)
+    );
+  }
+
+  const { username, recipeId } = req.body;
+
+  let user;
+  try {
+    user = await User.findOne({ username: username }).orFail();
+  } catch (error) {
+    return next(new CustomError("user does not exists", 401));
+  }
+
+  user.userRecipes.pull(recipeId);
+
+  try {
+    user.save();
+  } catch (error) {
+    return next(new CustomError("failed to save user", 404));
+  }
+
+  res.json({ message: "recipe deleted", username: user.username });
 };
 
 exports.getAllRecipes = getAllRecipes;
