@@ -9,7 +9,7 @@ router.post(
   [
     check("username").not().isEmpty(),
     check("email").normalizeEmail().isEmail(),
-    check("password").isLength({ min: 5, max: 10 }),
+    check("password").isLength({ min: 5, max: 15 }),
   ],
   signup
 );
@@ -17,11 +17,9 @@ router.post(
   "/login",
   [
     check("email").normalizeEmail().isEmail(),
-    check("password").isLength({ min: 5, max: 10 }),
+    check("password").isLength({ min: 5, max: 15 }),
   ],
   login
 );
-
-// manage delete account
 
 module.exports = router;
