@@ -51,6 +51,13 @@ const saveRecipe = async (req, res, next) => {
     return next(new CustomError("user does not exists", 401));
   }
 
+  const existingRecipe = user.userRecipes.find(
+    (recipe) => recipe.toString() === recipeId
+  );
+  if (existingRecipe) {
+    return next(new CustomError("recipe is already saved", 401));
+  }
+
   user.userRecipes = [...user.userRecipes, recipeId];
 
   try {
@@ -77,6 +84,13 @@ const deleteRecipe = async (req, res, next) => {
     user = await User.findOne({ username: username }).orFail();
   } catch (error) {
     return next(new CustomError("user does not exists", 401));
+  }
+
+  const existingRecipe = user.userRecipes.find(
+    (recipe) => recipe.toString() === recipeId
+  );
+  if (!existingRecipe) {
+    return next(new CustomError("recipe does not exists", 401));
   }
 
   user.userRecipes.pull(recipeId);

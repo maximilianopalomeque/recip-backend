@@ -22,4 +22,6 @@ router.post(
   login
 );
 
+// manage delete account
+
 module.exports = router;
