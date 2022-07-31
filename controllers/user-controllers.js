@@ -125,5 +125,41 @@ const login = async (req, res, next) => {
   });
 };
 
+const deleteUser = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(new CustomError("invalid credentials, can't delete user", 401));
+  }
+
+  const { email, password } = req.body;
+
+  let existingUser;
+  try {
+    existingUser = await User.findOne({ email: email }).orFail();
+  } catch (error) {
+    return next(
+      new CustomError("user does not exists, check your credentials", 500)
+    );
+  }
+
+  try {
+    const validPassword = await bcrypt.compare(password, existingUser.password);
+    if (!validPassword) {
+      return next(new CustomError("incorrect password", 500));
+    }
+  } catch (error) {
+    return next(new CustomError("failed to compare passwords", 500));
+  }
+
+  try {
+    await User.findOneAndDelete({ email: email });
+  } catch (error) {
+    return next(new CustomError("could not delete user", 500));
+  }
+
+  res.json("user deleted");
+};
+
 exports.signup = signup;
 exports.login = login;
+exports.deleteUser = deleteUser;

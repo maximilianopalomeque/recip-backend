@@ -2,7 +2,13 @@ const express = require("express");
 const router = express.Router();
 const { check } = require("express-validator");
 
-const { signup, login } = require("../controllers/user-controllers");
+const { checkAuth } = require("../middlewares/check-auth");
+
+const {
+  signup,
+  login,
+  deleteUser,
+} = require("../controllers/user-controllers");
 
 router.post(
   "/signup",
@@ -13,6 +19,7 @@ router.post(
   ],
   signup
 );
+
 router.post(
   "/login",
   [
@@ -20,6 +27,17 @@ router.post(
     check("password").isLength({ min: 5, max: 15 }),
   ],
   login
+);
+
+router.use(checkAuth);
+
+router.delete(
+  "/delete",
+  [
+    check("email").normalizeEmail().isEmail(),
+    check("password").isLength({ min: 5, max: 15 }),
+  ],
+  deleteUser
 );
 
 module.exports = router;
