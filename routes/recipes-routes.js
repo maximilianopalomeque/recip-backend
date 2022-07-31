@@ -10,7 +10,7 @@ const {
 } = require("../controllers/recipes-controllers");
 const { checkAuth } = require("../middlewares/check-auth");
 
-router.get("/", getAllRecipes);
+router.get("/all", getAllRecipes);
 
 router.get("/:recipeName", getRecipe);
 
