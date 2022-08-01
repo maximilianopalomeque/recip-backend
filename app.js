@@ -13,7 +13,6 @@ const userRoutes = require("./routes/user-routes");
 
 app.use(express.json());
 
-// manage cors before deploy
 app.use(
   cors({
     allowedHeaders: ["Content-Type", "Authorization"],
