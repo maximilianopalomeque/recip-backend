@@ -47,3 +47,5 @@ mongoose
   });
 
 app.listen(port, () => console.log("listening on asigned port"));
+
+module.exports = app;
